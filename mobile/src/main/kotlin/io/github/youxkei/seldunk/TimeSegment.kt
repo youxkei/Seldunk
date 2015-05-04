@@ -9,7 +9,8 @@ import java.util.Date
  * Created by youkei on 15/04/24.
  */
 
-Table(name = "TimeSegment") public class TimeSegment() : Model() {
-    Column(name = "begin") var begin: Date = Date()
-    Column(name = "end") var end: Date = Date()
-}
+Table(name = "TimeSegment") class TimeSegment(
+        Column(name = "begin") var begin: Date = Date(),
+        Column(name = "end") var end: Date = Date(),
+        Column(name = "title") var title: String = ""
+) : Model() {}

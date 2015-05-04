@@ -1,7 +1,11 @@
 package io.github.youxkei.seldunk
 
+import android.app.Activity
+import android.app.PendingIntent
 import android.content.Intent
 import android.os.Bundle
+import android.support.v4.app.NotificationCompat
+import android.support.v4.app.NotificationManagerCompat
 import android.support.v7.app.ActionBarActivity
 import android.util.Log
 import android.view.Menu
@@ -14,37 +18,20 @@ import rx.android.widget.WidgetObservable
 import java.util.Date
 import java.util.concurrent.TimeUnit
 
-class MainActivity(): ActionBarActivity() {
+class MainActivity(): Activity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
 
-        val editText = findViewById(R.id.editText) as EditText
-        val textView = findViewById(R.id.textView) as TextView
-
-        WidgetObservable.text(editText)
-                .debounce(500, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
-                .subscribe{ event ->
-                    textView.setText(event.text())
-
-                    val intent = Intent(this, javaClass<MainService>())
-                    intent.putExtra("SeldunkAction", event.text().toString())
-                    startService(intent)
-                }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        getMenuInflater().inflate(R.menu.menu_main, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        val id = item?.getItemId()
-
-        if (id == R.id.action_settings) {
-            return true;
+        for (timeSegment in Select().from(javaClass<TimeSegment>()).execute<TimeSegment>()) {
+            Log.d("", timeSegment.begin.toString() + " >> " + timeSegment.title + " >> " + timeSegment.end.toString())
         }
 
-        return super.onOptionsItemSelected(item)
+        val intent = Intent(this, javaClass<MainService>())
+        intent.setAction(MainService.START)
+
+        startService(intent)
+
+        finish()
     }
 }
